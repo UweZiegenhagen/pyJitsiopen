@@ -1,40 +1,56 @@
-# -*- coding: utf-8 -*-
-"""
-Created on 20200323
+import tkinter as tk # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-dropdown-menu-in-tkinter/
+import webbrowser
 
-@author: Uwe Ziegenhagen, ziegenhagen@gmail.com
-"""
+url = "https://www.dingfabrik.de"
+
+OptionList = [
+"Aries",
+"Taurus",
+"Gemini",
+"Cancer"
+] 
 
 
-from tkinter import *
+def openweb(): # https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
+    webbrowser.open(url,new=1)
+
+def myprint():
+    print('Hello World')
+
+app = tk.Tk()
+
+app.geometry('800x600')
+
+variable = tk.StringVar(app)
+variable.set(OptionList[0])
+
+opt = tk.OptionMenu(app, variable, *OptionList)
+opt.config(width=200, font=('Helvetica', 16))
+opt.pack(side="top")
+
+readOnlyText = tk.Text(app, height=2, width=100) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
+readOnlyText.insert(END,"ABCDEF")
+#readOnlyText.configure(state='disabled')
+readOnlyText.pack(side="bottom")
 
 
+labelTest = tk.Label(text="", font=('Helvetica', 16), fg='red')
+labelTest.pack(side="top")
 
-class Application(Frame):
-    def say_hi(self):
-        print("hi there, everyone!")
+buttonBrowser = tk.Button(app, 
+              text="Open browser",command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
+buttonBrowser.pack(side="bottom")
 
-    def createWidgets(self):
-        self.QUIT = Button(self)
-        self.QUIT["text"] = "QUIT"
-        self.QUIT["fg"]   = "red"
-        self.QUIT["command"] =  self.quit
 
-        self.QUIT.pack({"side": "left"})
+buttonExample = tk.Button(app, 
+              text="Do something",command=myprint) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
+buttonExample.pack(side="bottom")
 
-        self.hi_there = Button(self)
-        self.hi_there["text"] = "Hello",
-        self.hi_there["command"] = self.say_hi
 
-        self.hi_there.pack({"side": "left"})
+def callback(*args):
+    labelTest.configure(text="The selected item is {}".format(variable.get()))
+    readOnlyText.insert(END,variable.get())
+    
+variable.trace("w", callback)
 
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.pack()
-        self.createWidgets()
-
-root = Tk()
-root.geometry("800x480")
-app = Application(master=root)
 app.mainloop()
-root.destroy()
