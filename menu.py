@@ -1,14 +1,23 @@
 import tkinter as tk # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-dropdown-menu-in-tkinter/
 import webbrowser
+import configparser
+
 
 url = "https://www.dingfabrik.de"
 
-OptionList = [
-"Aries",
-"Taurus",
-"Gemini",
-"Cancer"
-] 
+Config = configparser.ConfigParser()
+Config.read('Einstellungen.conf')
+
+servers = Config.items('Server')
+serverList = []
+for server in servers:
+    serverList.append(server[1])
+
+names = Config.items('Namen')
+print(names)
+nameList = []
+for name in names:
+    nameList.append(name[1])
 
 
 def openweb(): # https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
@@ -21,15 +30,23 @@ app = tk.Tk()
 
 app.geometry('800x600')
 
-variable = tk.StringVar(app)
-variable.set(OptionList[0])
+currentServer = tk.StringVar(app)
+currentServer.set(serverList[0])
 
-opt = tk.OptionMenu(app, variable, *OptionList)
-opt.config(width=200, font=('Helvetica', 16))
-opt.pack(side="top")
+currentName = tk.StringVar(app)
+currentName.set(nameList[0])
+
+srv = tk.OptionMenu(app, currentServer, *serverList)
+srv.config(width=200, font=('Helvetica', 16))
+srv.pack(side="top")
+
+namedropdown = tk.OptionMenu(app, currentName, *nameList)
+namedropdown.config(width=200, font=('Helvetica', 16))
+namedropdown.pack(side="top")
+
 
 readOnlyText = tk.Text(app, height=2, width=100) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
-readOnlyText.insert(END,"ABCDEF")
+readOnlyText.insert(1.0,"ABCDEF")
 #readOnlyText.configure(state='disabled')
 readOnlyText.pack(side="bottom")
 
@@ -49,7 +66,7 @@ buttonExample.pack(side="bottom")
 
 def callback(*args):
     labelTest.configure(text="The selected item is {}".format(variable.get()))
-    readOnlyText.insert(END,variable.get())
+    readOnlyText.insert(1.0,variable.get())
     
 variable.trace("w", callback)
 
