@@ -6,7 +6,7 @@ import configparser
 url = "https://www.dingfabrik.de"
 
 Config = configparser.ConfigParser()
-Config.read('Einstellungen.conf')
+Config.read('Einstellungen.conf', encoding='utf-8')
 
 servers = Config.items('Server')
 serverList = []
@@ -68,6 +68,6 @@ def callback(*args):
     labelTest.configure(text="The selected item is {}".format(variable.get()))
     readOnlyText.insert(1.0,variable.get())
     
-variable.trace("w", callback)
+currentName.trace("w", callback)
 
 app.mainloop()
