@@ -1,81 +1,83 @@
+"""
+Uwe Ziegenhagen, ziegenhagen@gmail.com
+Simple tkinter GUI to start a Jitsi Meeting
+"""
+
 import tkinter as tk # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-dropdown-menu-in-tkinter/
-from tkinter import font as tkFont  # https://stackoverflow.com/questions/20588417/how-to-change-font-and-size-of-buttons-and-frame-in-tkinter-using-python/20588878
 import webbrowser
 import configparser
 
+url = ""
 
-# helv36 = tkFont.Font(family='Helvetica', size=36, weight='bold')
-
-url = "https://www.dingfabrik.de"
-
+# read URLs and names from Einstellungen.conf
 Config = configparser.ConfigParser()
 Config.read('Einstellungen.conf', encoding='utf-8')
 
+# prepare lists of servers and names
 servers = Config.items('Server')
 serverList = []
 for server in servers:
     serverList.append(server[1])
 
 names = Config.items('Namen')
-print(names)
 nameList = []
 for name in names:
     nameList.append(name[1])
 
 
-def openweb(): # https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
+def openweb():
+    """
+       Open default browser
+       based on https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
+    """
+    print(url)
     webbrowser.open(url,new=1)
 
-def onButton():
-    """
-        What is happen once the "Do something" button is pressed
-    """
-    pass
-
-app = tk.Tk()
-
+app = tk.Tk() # the tkinter panel
 app.geometry('800x400') # 800x600 should be fine for all laptops
 
-currentServer = tk.StringVar(app)
+currentServer = tk.StringVar(app) # some tkinter stuff
 currentServer.set(serverList[0])
 
-currentName = tk.StringVar(app)
+currentName = tk.StringVar(app) # more tkinter stuff
 currentName.set(nameList[0])
 
-srv = tk.OptionMenu(app, currentServer, *serverList)
+url = currentServer.get() + '/' + currentName.get().replace(' ','')
+
+srv = tk.OptionMenu(app, currentServer, *serverList) # dropdown for the server
 srv.config(width=200, font=('Helvetica', 16))
 srv.pack(side="top")
 
-namedropdown = tk.OptionMenu(app, currentName, *nameList)
+namedropdown = tk.OptionMenu(app, currentName, *nameList) # dropdown for the names
 namedropdown.config(width=200, font=('Helvetica', 16))
 namedropdown.pack(side="top")
 
 
-urlText = tk.Text(app, height=2, width=100) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
+#urlText = tk.Text(app, height=2, width=100) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
 #urlText.insert(tk.END,"ABCDEF")
 #urlText.pack(side="bottom")
 
-
+# a label for the server url
 labelTest = tk.Label(text="", font=('Helvetica', 16), fg='red')
 labelTest.pack(side="top")
 
+# the button to initiate the Jitsi session
 buttonBrowser = tk.Button(app, 
               text="Starte Jitsi",font=('Helvetica', '20'), command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
-#buttonBrowser['font'] = helv36
-buttonBrowser.pack(side="bottom")
+buttonBrowser.pack(side="bottom") # put it at the bottom
 
-
-buttonExample = tk.Button(app, 
-              text="Dingfabrik Köln",command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
+#buttonExample = tk.Button(app, 
+#              text="Dingfabrik Köln",command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
 #buttonExample.pack(side="bottom")
 
 
 def callback(*args):
+    global url
     url = currentServer.get() + '/' + currentName.get().replace(' ','')
+    print(url)
     labelTest.configure(text=url)
-    #urlText.delete(1.0,tk.END)
-    #urlText.insert(tk.END,url)
-    
+
+# call the callback() function if server or name dropdown is used.
 currentName.trace("w", callback)
 currentServer.trace("w", callback)
 
