@@ -6,8 +6,24 @@ Simple tkinter GUI to start a Jitsi Meeting
 import tkinter as tk # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-dropdown-menu-in-tkinter/
 import webbrowser
 import configparser
+from urllib.request import urlopen 
+from urllib.error import HTTPError, URLError
 
+
+def internet_on():
+    """
+     Check online status
+    """
+    try:
+        urlopen('https://github.com', timeout=2)
+        return True
+    except HTTPError as error: 
+        return False
+    except URLError as error: 
+        return False 
+    
 url = ""
+this_version = 0.01
 
 # read URLs and names from Einstellungen.conf
 Config = configparser.ConfigParser()
@@ -25,6 +41,9 @@ for name in names:
     nameList.append(name[1])
 
 
+def update():
+    pass
+
 def openweb():
     """
        Open default browser
@@ -33,7 +52,22 @@ def openweb():
     print(url)
     webbrowser.open(url,new=1)
 
+
+onlineCheck = internet_on()
+if onlineCheck == True:
+    onlineString = 'Mit dem Internet verbunden'
+else:
+    onlineString = 'Keine Verbindung zum Internet!'
+
+
+# Check the version
+# https://stackoverflow.com/questions/1393324/in-python-given-a-url-to-a-text-file-what-is-the-simplest-way-to-read-the-cont
+version_online = urlopen('https://raw.githubusercontent.com/UweZiegenhagen/pyJitsiopen/master/latest_version')
+version_online = float(version_online.read())
+
 app = tk.Tk() # the tkinter panel
+app.title('Dingfabrik.de Jitsi-Zugang ' + str(version) + ': ' + onlineString)
+
 app.geometry('800x400') # 800x600 should be fine for all laptops
 
 currentServer = tk.StringVar(app) # some tkinter stuff
@@ -53,12 +87,21 @@ namedropdown.config(width=200, font=('Helvetica', 16))
 namedropdown.pack(side="top")
 
 
-#urlText = tk.Text(app, height=2, width=100) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
-#urlText.insert(tk.END,"ABCDEF")
-#urlText.pack(side="bottom")
+urlText = tk.Text(app, height=2, width=100, font=('Helvetica', 16)) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
+urlText.delete(1.0, tk.END)
+
+if version_online > this_version:
+    urlText.insert(tk.END,'Eine neue Version ist online verfügbar')
+    # TODO: https://www.freecodecamp.org/forum/t/git-pull-how-to-override-local-files-with-git-pull/13216
+else:
+        urlText.insert(tk.END,'Diese Version ist aktuell!')
+
+urlText.pack(side="bottom")
+
+
 
 # a label for the server url
-labelTest = tk.Label(text="", font=('Helvetica', 16), fg='red')
+labelTest = tk.Label(text="", font=('Helvetica', 16), fg='green')
 labelTest.pack(side="top")
 
 # the button to initiate the Jitsi session
@@ -66,9 +109,9 @@ buttonBrowser = tk.Button(app,
               text="Starte Jitsi",font=('Helvetica', '20'), command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
 buttonBrowser.pack(side="bottom") # put it at the bottom
 
-#buttonExample = tk.Button(app, 
-#              text="Dingfabrik Köln",command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
-#buttonExample.pack(side="bottom")
+buttonUpdate = tk.Button(app, 
+              text="Aktualisieren",command=update, state=tk.DISABLED, font=('Helvetica', '20')) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
+buttonUpdate.pack(side="left")
 
 
 def callback(*args):
