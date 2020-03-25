@@ -8,6 +8,7 @@ import webbrowser
 import configparser
 from urllib.request import urlopen 
 from urllib.error import HTTPError, URLError
+import os.path
 
 
 def internet_on():
@@ -24,6 +25,7 @@ def internet_on():
     
 url = ""
 this_version = 0.01
+standort = ''
 
 # read URLs and names from Einstellungen.conf
 Config = configparser.ConfigParser()
@@ -35,8 +37,28 @@ serverList = []
 for server in servers:
     serverList.append(server[1])
 
-names = Config.items('Namen')
-nameList = []
+
+nameList = [] # leeres Array anlegen
+nameConfig = configparser.ConfigParser()
+
+# check if file exists, create one if necessary
+# https://linuxize.com/post/python-check-if-file-exists/
+if os.path.isfile('Namen.txt'):
+    print ("Namensdatei existiert")
+else:
+    print ("Namensdatei existiert nicht, wird angelegt")
+    with open('Namen.txt', 'wt') as names:
+        names.write('[Standort]\nStandort=Altersheim ohne Umlaute\n')
+        names.write('[Namen]\n')
+        names.write('Name1=Max Mustermann\n')
+        names.write('Name2=Gabriele Mustermann\n')        
+        names.write('Name3=Marianne Mustermann\n')        
+
+nameConfig.read('Namen.txt', encoding='utf-8')
+
+standort = nameConfig.get('Standort', 'Standort').replace(' ','').lower()
+
+names = nameConfig.items('Namen')
 for name in names:
     nameList.append(name[1])
 
@@ -116,7 +138,7 @@ buttonUpdate.pack(side="left")
 
 def callback(*args):
     global url
-    url = currentServer.get() + '/' + currentName.get().replace(' ','')
+    url = currentServer.get() + '/' + standort + '/' + currentName.get().replace(' ','').lower()
     print(url)
     labelTest.configure(text=url)
 
