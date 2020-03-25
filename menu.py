@@ -66,7 +66,7 @@ version_online = urlopen('https://raw.githubusercontent.com/UweZiegenhagen/pyJit
 version_online = float(version_online.read())
 
 app = tk.Tk() # the tkinter panel
-app.title('Dingfabrik.de Jitsi-Zugang ' + str(version) + ': ' + onlineString)
+app.title('Dingfabrik.de Jitsi-Zugang ' + str(this_version) + ': ' + onlineString)
 
 app.geometry('800x400') # 800x600 should be fine for all laptops
 
