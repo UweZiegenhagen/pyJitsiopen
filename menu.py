@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 """
 Uwe Ziegenhagen, ziegenhagen@gmail.com
 Simple tkinter GUI to start a Jitsi Meeting
