@@ -45,18 +45,18 @@ nameConfig = configparser.ConfigParser()
 
 # check if file exists, create one if necessary
 # https://linuxize.com/post/python-check-if-file-exists/
-if os.path.isfile('Namen.txt'):
+if os.path.isfile('namen.txt'):
     print ("Namensdatei existiert")
 else:
     print ("Namensdatei existiert nicht, wird angelegt")
-    with open('Namen.txt', 'wt') as names:
+    with open('namen.txt', 'wt') as names:
         names.write('[Standort]\nStandort=Altersheim ohne Umlaute\n')
         names.write('[Namen]\n')
         names.write('Name1=Max Mustermann\n')
         names.write('Name2=Gabriele Mustermann\n')        
         names.write('Name3=Marianne Mustermann\n')        
 
-nameConfig.read('Namen.txt', encoding='utf-8')
+nameConfig.read('namen.txt', encoding='utf-8')
 
 standort = nameConfig.get('Standort', 'Standort').replace(' ','').lower()
 
