@@ -24,7 +24,7 @@ def internet_on():
         return False 
     
 url = ""
-this_version = 0.01
+this_version = 0.1
 standort = ''
 
 # read URLs and names from Einstellungen.conf
@@ -71,6 +71,8 @@ def openweb():
        Open default browser
        based on https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
     """
+    global url
+    url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
     print(url)
     webbrowser.open(url,new=1)
 
@@ -138,7 +140,7 @@ buttonUpdate.pack(side="left")
 
 def callback(*args):
     global url
-    url = currentServer.get() + '/' + standort + '/' + currentName.get().replace(' ','').lower()
+    url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
     print(url)
     labelTest.configure(text=url)
 
