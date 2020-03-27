@@ -152,8 +152,8 @@ buttonUpdate = tk.Button(app,
 #buttonUpdate.pack(side="left")
 
 
-urlText.insert(tk.END,'1. Server auswählen\n')
-urlText.insert(tk.END,'2. Namen auswählen\n')
+urlText.insert(tk.END,'1. Server im obersten Menü auswählen\n')
+urlText.insert(tk.END,'2. Darunter den Namen der Konferenz auswählen\n')
 urlText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
 urlText.insert(tk.END,'4. Starte Jitsi Button drücken')
 urlText.pack(side="bottom")
