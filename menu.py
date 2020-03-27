@@ -50,11 +50,14 @@ if os.path.isfile('namen.txt'):
 else:
     print ("Namensdatei existiert nicht, wird angelegt")
     with open('namen.txt', 'wt') as names:
-        names.write('[Standort]\nStandort=Altersheim ohne Umlaute\n')
+        names.write('[Standort]\nStandort=Theo Burauen\n')
         names.write('[Namen]\n')
-        names.write('Name1=Max Mustermann\n')
-        names.write('Name2=Gabriele Mustermann\n')        
-        names.write('Name3=Marianne Mustermann\n')        
+        names.write('Name1=Max Frisch\n')
+        names.write('Name2=Heinrich Heine\n')        
+        names.write('Name3=Theodor Storm\n')        
+        names.write('Name4=Vivi Bach\n')        
+        names.write('Name5=Senta Berger\n')        
+        names.write('Name6=Marlene Dietrich\n')                
 
 nameConfig.read('namen.txt', encoding='utf-8')
 
@@ -149,8 +152,8 @@ buttonUpdate = tk.Button(app,
 #buttonUpdate.pack(side="left")
 
 
-urlText.insert(tk.END,'1. Namen auswählen\n')
-urlText.insert(tk.END,'2. ggf Server auswählen\n')
+urlText.insert(tk.END,'1. Server auswählen\n')
+urlText.insert(tk.END,'2. Namen auswählen\n')
 urlText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
 urlText.insert(tk.END,'4. Starte Jitsi Button drücken')
 urlText.pack(side="bottom")
@@ -160,7 +163,7 @@ def callback(*args):
     global url
     url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
     print(url)
-    labelTest.configure(text=url[8::])
+    labelTest.configure(text=url)
 
 # call the callback() function if server or name dropdown is used.
 currentName.trace("w", callback)
