@@ -94,7 +94,15 @@ version_online = float(version_online.read())
 app = tk.Tk() # the tkinter panel
 app.title('Dingfabrik.de Jitsi-Zugang ' + str(this_version) + ': ' + onlineString)
 
-app.geometry('800x400') # 800x600 should be fine for all laptops
+# 800x400 should be fine for all laptops
+w=800
+h=400
+ws = app.winfo_screenwidth()
+hs = app.winfo_screenheight()
+x = (ws/2) - (w/2)
+y = (hs/2) - (h/2)
+app.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
 
 currentServer = tk.StringVar(app) # some tkinter stuff
 currentServer.set(serverList[0])
@@ -113,16 +121,17 @@ namedropdown.config(width=200, font=('Helvetica', 16))
 namedropdown.pack(side="top")
 
 
-urlText = tk.Text(app, height=2, width=100, font=('Helvetica', 16)) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
+urlText = tk.Text(app, height=5, width=100, font=('Helvetica', 16)) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
 urlText.delete(1.0, tk.END)
 
-if version_online > this_version:
-    urlText.insert(tk.END,'Eine neue Version ist online verfügbar')
-    # TODO: https://www.freecodecamp.org/forum/t/git-pull-how-to-override-local-files-with-git-pull/13216
-else:
-        urlText.insert(tk.END,'Diese Version ist aktuell!')
 
-urlText.pack(side="bottom")
+
+#if version_online > this_version:
+#    urlText.insert(tk.END,'Eine neue Version ist online verfügbar')
+#    # TODO: https://www.freecodecamp.org/forum/t/git-pull-how-to-override-local-files-with-git-pull/13216
+#else:
+#        urlText.insert(tk.END,'Diese Version ist aktuell!')
+
 
 
 
@@ -137,14 +146,21 @@ buttonBrowser.pack(side="bottom") # put it at the bottom
 
 buttonUpdate = tk.Button(app, 
               text="Aktualisieren",command=update, state=tk.DISABLED, font=('Helvetica', '20')) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
-buttonUpdate.pack(side="left")
+#buttonUpdate.pack(side="left")
 
+
+urlText.insert(tk.END,'1. Namen auswählen\n')
+urlText.insert(tk.END,'2. ggf Server auswählen\n')
+urlText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
+urlText.insert(tk.END,'4. Starte Jitsi Button drücken')
+urlText.pack(side="bottom")
+urlText.configure(state='disabled')
 
 def callback(*args):
     global url
     url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
     print(url)
-    labelTest.configure(text=url)
+    labelTest.configure(text=url[8::])
 
 # call the callback() function if server or name dropdown is used.
 currentName.trace("w", callback)
