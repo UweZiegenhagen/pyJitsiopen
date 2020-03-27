@@ -163,7 +163,7 @@ def callback(*args):
     global url
     url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
     print(url)
-    labelTest.configure(text=url)
+    labelTest.configure(text=url[8::])
 
 # call the callback() function if server or name dropdown is used.
 currentName.trace("w", callback)
