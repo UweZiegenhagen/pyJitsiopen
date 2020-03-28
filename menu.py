@@ -107,6 +107,9 @@ y = (hs/2) - (h/2)
 app.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
+
+
+
 currentServer = tk.StringVar(app) # some tkinter stuff
 currentServer.set(serverList[0])
 
@@ -115,18 +118,27 @@ currentName.set(nameList[0])
 
 url = currentServer.get() + '/' + currentName.get().replace(' ','')
 
+serverLabel = tk.Label(master=app, text='Server')
+serverLabel.grid(row=0, column=0, padx='5', pady='5', sticky='e')
+
 srv = tk.OptionMenu(app, currentServer, *serverList) # dropdown for the server
-srv.config(width=200, font=('Helvetica', 16))
-srv.pack(side="top")
+srv.config( font=('Helvetica', 16))
+srv.grid(row=0,column=1,sticky='w')
+# srv.pack(side="top")
+
+
+nameLabel = tk.Label(master=app, text='Name')
+nameLabel.grid(row=2, column=0, sticky='e',padx='5', pady='5')
 
 namedropdown = tk.OptionMenu(app, currentName, *nameList) # dropdown for the names
-namedropdown.config(width=200, font=('Helvetica', 16))
-namedropdown.pack(side="top")
+namedropdown.config( font=('Helvetica', 16))
+namedropdown.grid(row=2,column=1, sticky='w')
+#namedropdown.pack(side="top")
 
 
-urlText = tk.Text(app, height=5, width=100, font=('Helvetica', 16)) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
+
+urlText = tk.Text(app, font=('Helvetica', 16)) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
 urlText.delete(1.0, tk.END)
-
 
 
 #if version_online > this_version:
@@ -135,17 +147,19 @@ urlText.delete(1.0, tk.END)
 #else:
 #        urlText.insert(tk.END,'Diese Version ist aktuell!')
 
-
-
+urlLabel = tk.Label(master=app, text='URL')
+urlLabel.grid(row=3, column=0, padx='5', pady='5', sticky='e')
 
 # a label for the server url
 labelTest = tk.Label(text="", font=('Helvetica', 16), fg='green')
-labelTest.pack(side="top")
+labelTest.grid(row=3,column=1, sticky='w')
+#labelTest.pack(side="top")
 
 # the button to initiate the Jitsi session
 buttonBrowser = tk.Button(app, 
               text="Starte Jitsi",font=('Helvetica', '20'), command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
-buttonBrowser.pack(side="bottom") # put it at the bottom
+#buttonBrowser.pack(side="bottom") # put it at the bottom
+buttonBrowser.grid(row=4,column=1, sticky='w', padx='5', pady='5')
 
 buttonUpdate = tk.Button(app, 
               text="Aktualisieren",command=update, state=tk.DISABLED, font=('Helvetica', '20')) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
@@ -155,8 +169,10 @@ buttonUpdate = tk.Button(app,
 urlText.insert(tk.END,'1. Server im obersten Menü auswählen\n')
 urlText.insert(tk.END,'2. Darunter den Namen der Konferenz auswählen\n')
 urlText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
-urlText.insert(tk.END,'4. Starte Jitsi Button drücken')
-urlText.pack(side="bottom")
+urlText.insert(tk.END,'4. "Starte Jitsi" Button drücken')
+#urlText.pack(side="bottom")
+urlText.grid(row=8,column=1, sticky='e', padx='5', pady='5') # columnspan=2
+
 urlText.configure(state='disabled')
 
 def callback(*args):
