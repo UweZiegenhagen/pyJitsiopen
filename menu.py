@@ -15,7 +15,7 @@ import os.path
 
 def internet_on():
     """
-     Check online status
+     Check online status by opening github.com
     """
     try:
         urlopen('https://github.com', timeout=2)
@@ -24,26 +24,38 @@ def internet_on():
         return False
     except URLError as error: 
         return False 
+
+def openweb():
+    """
+       Open default browser
+       based on https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
+    """
+    global url
+    url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
+    print(url)
+    webbrowser.open(url,new=1)
     
+
+# some global variables    
 url = ""
 this_version = 0.1
 standort = ''
 
-# read URLs and names from Einstellungen.conf
+# read URLs from Einstellungen.conf
 Config = configparser.ConfigParser()
 Config.read('Einstellungen.conf', encoding='utf-8')
 
-# prepare lists of servers and names
+# get list of servers from Einstellungen.conf file
 servers = Config.items('Server')
 serverList = []
 for server in servers:
     serverList.append(server[1])
 
-
-nameList = [] # leeres Array anlegen
-nameConfig = configparser.ConfigParser()
-
-# check if file exists, create one if necessary
+###################################
+# Name handling
+###################################
+    
+# check if name file exists, create one if necessary
 # https://linuxize.com/post/python-check-if-file-exists/
 if os.path.isfile('namen.txt'):
     print ("Namensdatei existiert")
@@ -57,42 +69,35 @@ else:
         names.write('Name3=Theodor Storm\n')        
         names.write('Name4=Vivi Bach\n')        
         names.write('Name5=Senta Berger\n')        
-        names.write('Name6=Marlene Dietrich\n')                
+        names.write('Name6=Marlene Dietrich\n')    
+    
 
+nameList = [] # empty array for the names
+nameConfig = configparser.ConfigParser() # another config parser for the names
 nameConfig.read('namen.txt', encoding='utf-8')
-
 standort = nameConfig.get('Standort', 'Standort').replace(' ','').lower()
 
+# fill names list with names from the config file
 names = nameConfig.items('Namen')
 for name in names:
     nameList.append(name[1])
 
 
-def update():
-    pass
-
-def openweb():
-    """
-       Open default browser
-       based on https://gist.github.com/RandomResourceWeb/93e887facdb98937ab5d260d1a0df270
-    """
-    global url
-    url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
-    print(url)
-    webbrowser.open(url,new=1)
-
-
+# check internet connection
 onlineCheck = internet_on()
 if onlineCheck == True:
     onlineString = 'Mit dem Internet verbunden'
 else:
     onlineString = 'Keine Verbindung zum Internet!'
 
-
 # Check the version
 # https://stackoverflow.com/questions/1393324/in-python-given-a-url-to-a-text-file-what-is-the-simplest-way-to-read-the-cont
-version_online = urlopen('https://raw.githubusercontent.com/UweZiegenhagen/pyJitsiopen/master/latest_version')
-version_online = float(version_online.read())
+if internet_on():
+    version_online = urlopen('https://raw.githubusercontent.com/UweZiegenhagen/pyJitsiopen/master/latest_version')
+    version_online = float(version_online.read())
+else:
+    version_online = 0
+
 
 app = tk.Tk() # the tkinter panel
 app.title('Dingfabrik.de Jitsi-Zugang ' + str(this_version) + ': ' + onlineString)
@@ -107,39 +112,29 @@ y = (hs/2) - (h/2)
 app.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
-
-
-
-currentServer = tk.StringVar(app) # some tkinter stuff
+# currentServer and currentName take the values of the dropdowns
+currentServer = tk.StringVar(app) 
 currentServer.set(serverList[0])
 
-currentName = tk.StringVar(app) # more tkinter stuff
+currentName = tk.StringVar(app) 
 currentName.set(nameList[0])
 
-url = currentServer.get() + '/' + currentName.get().replace(' ','')
-
-serverLabel = tk.Label(master=app, text='Server')
+serverLabel = tk.Label(master=app, font=('Helvetica', 16), text='Server:')
 serverLabel.grid(row=0, column=0, padx='5', pady='5', sticky='e')
 
-srv = tk.OptionMenu(app, currentServer, *serverList) # dropdown for the server
-srv.config( font=('Helvetica', 16))
-srv.grid(row=0,column=1,sticky='w')
-# srv.pack(side="top")
+serverDropdown = tk.OptionMenu(app, currentServer, *serverList) # dropdown for the server
+serverDropdown.config( font=('Helvetica', 16))
+serverDropdown.grid(row=0,column=1,sticky='w')
 
-
-nameLabel = tk.Label(master=app, text='Name')
+nameLabel = tk.Label(master=app, font=('Helvetica', 16), text='Name:')
 nameLabel.grid(row=2, column=0, sticky='e',padx='5', pady='5')
 
-namedropdown = tk.OptionMenu(app, currentName, *nameList) # dropdown for the names
-namedropdown.config( font=('Helvetica', 16))
-namedropdown.grid(row=2,column=1, sticky='w')
-#namedropdown.pack(side="top")
+nameDropdown = tk.OptionMenu(app, currentName, *nameList) # dropdown for the names
+nameDropdown.config( font=('Helvetica', 16))
+nameDropdown.grid(row=2,column=1, sticky='w')
 
-
-
-urlText = tk.Text(app, font=('Helvetica', 16)) # https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
-urlText.delete(1.0, tk.END)
-
+# with currentServer and currentName we can build the url
+url = currentServer.get() + '/' + currentName.get().replace(' ','')
 
 #if version_online > this_version:
 #    urlText.insert(tk.END,'Eine neue Version ist online verfügbar')
@@ -147,39 +142,38 @@ urlText.delete(1.0, tk.END)
 #else:
 #        urlText.insert(tk.END,'Diese Version ist aktuell!')
 
-urlLabel = tk.Label(master=app, text='URL')
+urlLabel = tk.Label(master=app, font=('Helvetica', 16), text='URL:')
 urlLabel.grid(row=3, column=0, padx='5', pady='5', sticky='e')
 
 # a label for the server url
-labelTest = tk.Label(text="", font=('Helvetica', 16), fg='green')
-labelTest.grid(row=3,column=1, sticky='w')
-#labelTest.pack(side="top")
+greenUrl = tk.Label(text="", font=('Helvetica', 16), fg='green')
+greenUrl.grid(row=3,column=1, sticky='w')
+greenUrl.bind("<Button-1>", lambda e: openweb())
+
 
 # the button to initiate the Jitsi session
-buttonBrowser = tk.Button(app, 
-              text="Starte Jitsi",font=('Helvetica', '20'), command=openweb) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
-#buttonBrowser.pack(side="bottom") # put it at the bottom
+# https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
+buttonBrowser = tk.Button(app, text="Starte Jitsi",font=('Helvetica', '20'), command=openweb) 
 buttonBrowser.grid(row=4,column=1, sticky='w', padx='5', pady='5')
 
-buttonUpdate = tk.Button(app, 
-              text="Aktualisieren",command=update, state=tk.DISABLED, font=('Helvetica', '20')) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
-#buttonUpdate.pack(side="left")
+#buttonUpdate = tk.Button(app, text="Aktualisieren",command=update, state=tk.DISABLED, font=('Helvetica', '20')) # https://www.delftstack.com/de/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
 
+# https://www.delftstack.com/de/howto/python-tkinter/how-to-make-tkinter-text-widget-read-only/
+helpText = tk.Text(app, font=('Helvetica', 20)) 
+helpText.delete(1.0, tk.END)
+helpText.insert(tk.END,'1. Server im obersten Menü auswählen\n')
+helpText.insert(tk.END,'2. Darunter den Namen der Konferenz auswählen\n')
+helpText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
+helpText.insert(tk.END,'4. "Starte Jitsi" Button drücken')
+helpText.grid(row=8,column=1, sticky='e', padx='5', pady='5') # columnspan=2
+helpText.configure(state='disabled') # read-only
 
-urlText.insert(tk.END,'1. Server im obersten Menü auswählen\n')
-urlText.insert(tk.END,'2. Darunter den Namen der Konferenz auswählen\n')
-urlText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
-urlText.insert(tk.END,'4. "Starte Jitsi" Button drücken')
-#urlText.pack(side="bottom")
-urlText.grid(row=8,column=1, sticky='e', padx='5', pady='5') # columnspan=2
-
-urlText.configure(state='disabled')
 
 def callback(*args):
     global url
     url = currentServer.get() + '/' + standort + '-' + currentName.get().replace(' ','').lower()
     print(url)
-    labelTest.configure(text=url[8::])
+    greenUrl.configure(text=url[8::])
 
 # call the callback() function if server or name dropdown is used.
 currentName.trace("w", callback)
