@@ -21,8 +21,10 @@ def internet_on():
         urlopen('https://github.com', timeout=2)
         return True
     except HTTPError as error: 
+        print(error)
         return False
     except URLError as error: 
+        print(error)
         return False 
 
 def openweb():
@@ -163,10 +165,20 @@ helpText = tk.Text(app, font=('Helvetica', 20))
 helpText.delete(1.0, tk.END)
 helpText.insert(tk.END,'1. Server im obersten Menü auswählen\n')
 helpText.insert(tk.END,'2. Darunter den Namen der Konferenz auswählen\n')
-helpText.insert(tk.END,'3. grünen Link an Gesprächspartner geben\n')
+helpText.insert(tk.END,'3. Grünen Link an Gesprächspartner geben\n')
 helpText.insert(tk.END,'4. "Starte Jitsi" drücken')
+
+if not internet_on():
+    helpText.insert(tk.END, '\n\n!!!Keine Verbindung zum Internet!!!')
+
 helpText.grid(row=8,column=1, sticky='e', padx='5', pady='5') # columnspan=2
 helpText.configure(state='disabled') # read-only
+
+#infoText = tk.Text(app, font=('Helvetica', 20), fg='red') 
+#infoText.delete(1.0, tk.END)
+#infoText.grid(row=9,column=1, sticky='e', padx='5', pady='5') # columnspan=2
+#infoText.configure(state='disabled') # read-only
+
 
 
 def callback(*args):
